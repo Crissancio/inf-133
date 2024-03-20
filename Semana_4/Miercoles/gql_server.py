@@ -47,6 +47,9 @@ class GraphQLRequestHandler(BaseHTTPRequestHandler):
             self.response_handler(200, result.data)
         else:
             self.response_handler(404, {"Error": "Ruta no existente"})
+    def do_GET(self):
+        if self.path == '/graphql':
+            
             
 def run_server(port=8000):
     try:

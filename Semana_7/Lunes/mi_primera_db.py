@@ -4,14 +4,17 @@ import os
 conn = sqlite3.connect("instituto.db")
 
 #Crear tabla de carreras
-conn.execute(
-    """
-    CREATE TABLE CARRERAS
-    (id INTEGER PRIMARY KEY,
-    nombre TEXT NOT NULL,
-    duracion INTEGER NOT NULL);
-    """
-)
+try:
+    conn.execute(
+        """
+        CREATE TABLE CARRERAS
+        (id INTEGER PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        duracion INTEGER NOT NULL);
+        """
+    )
+except sqlite3.OperationalError:
+    print("\nLa Tabla CARRERAS ya existe")
 
 #insertar datos de carrera
 conn.execute(
@@ -35,17 +38,18 @@ for row in cursor:
     print(row)
     
 #crear tabla de estudiantes
-
-conn.execute(
-    """
-    CREATE TABLE ESTUDIANTES
-    (id INTEGER PRIMARY KEY,
-    nombre TEXT NOT NULL,
-    apellido TEXT NOT NULL,
-    fecha_nacimiento DATE NOT NULL);
-    """
-)
-
+try:
+    conn.execute(
+        """
+        CREATE TABLE ESTUDIANTES
+        (id INTEGER PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        apellido TEXT NOT NULL,
+        fecha_nacimiento DATE NOT NULL);
+        """
+    )
+except sqlite3.OperationalError:
+    print("\nLa Tabla ESTUDIANTES ya existe")
 #insertar estudiantes a la tabla estudiantes
 
 conn.execute(
@@ -68,19 +72,20 @@ for row in cursor:
     print(row)
     
 #creamos la tabla de matriculacion
-
-conn.execute(
-    """
-    CREATE TABLE MATRICULACION
-    (id INTEGER PRIMARY KEY,
-    estudiante_id INTEGER NOT NULL,
-    carrera_id INTEGER NOT NULL,
-    fecha TEXT NOT NULL,
-    FOREIGN KEY (estudiante_id) REFERENCES ESTUDIANTES(id),
-    FOREIGN KEY (carrera_id) REFERENCES CARRERAS(id));
-    """
-)
-
+try:
+    conn.execute(
+        """
+        CREATE TABLE MATRICULACION
+        (id INTEGER PRIMARY KEY,
+        estudiante_id INTEGER NOT NULL,
+        carrera_id INTEGER NOT NULL,
+        fecha TEXT NOT NULL,
+        FOREIGN KEY (estudiante_id) REFERENCES ESTUDIANTES(id),
+        FOREIGN KEY (carrera_id) REFERENCES CARRERAS(id));
+        """
+    )
+except sqlite3.OperationalError:
+    print("\nLa Tabla MATRICULACION ya existe")
 #insertamos valores a la tabla 
 conn.execute(
     """
@@ -149,5 +154,8 @@ print("\nMatriculacion")
 cursor = conn.execute("SELECT * FROM MATRICULACION")
 for row in cursor:
     print(row)
-    
+   
+#confirmar cambios
+conn.commit()
+ 
 conn.close()

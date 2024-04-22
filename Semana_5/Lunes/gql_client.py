@@ -136,7 +136,7 @@ print(response.text)'''
 
 query_actualizar = """
 mutation {
-    updateEstudiante(id:2, carrera:"Antropologia"){
+    updateEstudiante(id:2, carrera:"Antropologia", nombre:"Cristoforo"){
         estudiante {
                 id
                 nombre

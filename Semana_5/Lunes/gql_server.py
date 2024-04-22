@@ -67,13 +67,15 @@ class UpdateEstudiante(Mutation):
     class Arguments:
         id = Int()
         carrera = String()
+        nombre = String()
     
     estudiante = Field(Estudiante)
     
-    def mutate(root, info ,id, carrera):
+    def mutate(root, info ,id, carrera, nombre):
         for i, estudiante in enumerate(estudiantes):
             if estudiante.id == id:
                 estudiante.carrera = carrera
+                estudiante.nombre = nombre
                 return UpdateEstudiante(estudiante=estudiante)
         return None
 

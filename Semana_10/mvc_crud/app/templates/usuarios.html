@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Lista de Usuarios</h2>
+<table border="1px">
+    <tr>
+        <th>id</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Contraseña</th>
+        <th>Nacimiento &#40;aaaa/mm/dd&#41;</th>
+    </tr>
+    {% for user in users %}
+        <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.name}}</td>
+            <td>{{user.last_name}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.password}}</td>
+            <td>{{user.bday}}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

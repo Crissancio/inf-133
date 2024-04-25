@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MVC_CRUD</title>
+  </head>
+  <body>
+    <h1 class="containerTitle">MVC</h1>
+    <nav class="barraNavegacion">
+        <a href="{{ url_for('user.registro') }}">Registrar Usuario</a>
+        <a href="{{url_for('user.usuarios')}}">Lista de Usuarios</a>
+    </nav>
+    <div class="viewContainer">
+        {% block content %}
+        <!--En Aqui va Una parte mutable, es decir que en esta parte de la pagina va a ser cambiante-->
+        {% endblock %}
+    </div>
+  </body>
+</html>

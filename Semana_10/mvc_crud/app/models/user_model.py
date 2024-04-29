@@ -30,3 +30,15 @@ class User(db.Model): # Representa la tabla "users" en la base de datos
     @staticmethod
     def get_all():
         return User.query.all()
+    
+    @staticmethod
+    def get_by_id(id):
+        return User.query.get(id)
+    
+    def update(self):
+        db.session.commit()
+    
+    @staticmethod
+    def delete(user):
+        db.session.delete(user)
+        db.session.commit()

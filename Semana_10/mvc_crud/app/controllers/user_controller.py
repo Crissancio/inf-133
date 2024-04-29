@@ -34,4 +34,32 @@ def registro():
         return redirect(url_for('user.usuarios'))
     # llamamos a la vista de registro
     return user_view.registro()
-        
+
+@user_bp.route('/users/<int:id>', methods=['GET'])
+def obtener_usuario(id):
+    user = User.get_by_id(id)
+    if not user:
+        return "Usuario no encontrado", 404
+    return user_view.actualizar(user)
+
+@user_bp.route('/users/<int:id>', methods=['POST'])
+def actualizar(id):
+    user = User.get_by_id(id)
+    if not user:
+        return "Usuario no encontrado", 404
+    
+    name = request.form['name']
+    last = request.form['last']
+    user.name = name
+    user.last_name = last
+    user.update()
+    
+    return redirect(url_for('user.usuarios'))
+
+@user_bp.route('/user/<int:id>', methods=['GET'])
+def eliminar(id):
+    user = User.get_by_id(id)
+    if not user:
+        return "Usuario no encontrado", 404
+    User.delete(user)
+    return redirect(url_for('user.usuarios'))

@@ -19,6 +19,17 @@
             <td>{{user.email}}</td>
             <td>{{user.password}}</td>
             <td>{{user.bday}}</td>
+                {% if user.id % 2 == 0 %}
+                    <td>Id Par</td>
+                {% else  %}
+                    <td>Id Impar</td>
+                {% endif %}
+            <td>
+                <a href="{{ url_for('user.actualizar', id = user.id) }}" class="updateButton">Editar</a>
+            </td>
+            <td>
+                <a href="{{ url_for('user.eliminar', id = user.id) }}" class="delteButton">Eliminar</a>
+            </td>
         </tr>
     {% endfor %}
 </table>

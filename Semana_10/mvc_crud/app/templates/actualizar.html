@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="uzpdateContainer">
+        <h2>
+            Actualizar Usuario
+        </h2>
+        <div class="formContainer">
+            <form method="post">
+                <div class="inputContainer">
+                    <label for="name">Nombre:</label><br>
+                    <input type="text" name="name" id="name" value="{{user.name}}" required><br>
+                </div>
+                <div class="inputContainer">
+                    <label for="last">Apellido:</label><br>
+                    <input type="text" name="last" id="last" value="{{user.last_name}}" required>
+                </div>
+                <input type="submit" value="Actualizar" class="primaryButton">
+            </form>
+        </div>
+    </div>
+{% endblock %}

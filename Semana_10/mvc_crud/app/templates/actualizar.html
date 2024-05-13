@@ -15,6 +15,19 @@
                     <label for="last">Apellido:</label><br>
                     <input type="text" name="last" id="last" value="{{user.last_name}}" required>
                 </div>
+                <div class="inputContainer">
+                    <label for="email">Email:</label><br>
+                    <input type="text" name="email" id="email" value="{{user.email}}" required>
+                </div>
+                <div class="inputContainer">
+                    <label for="password">Contraseña:</label><br>
+                    <input type="text" name="password" id="password" value="{{user.password}}" required>
+                </div>
+                <div class="inputContainer">
+                    <label for="bday">Fecha de Nacimiento:</label><br>
+                    <input type="text" name="bday" id="bday" value="{{user.bday.strftime('%m-%d-%Y')}}" required placeholder="mm/
+                    -dd-aaaa">
+                </div>
                 <input type="submit" value="Actualizar" class="primaryButton">
             </form>
         </div>

@@ -1,73 +1,113 @@
-from flask import Blueprint, request, redirect, url_for
-from datetime import datetime
+from flask import Blueprint, request, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required
+from werkzeug.security import check_password_hash
 
-#importamos la vista de usuario
+# Importamos la vista de usuarios
 from views import user_view
-#importamos el modelo de Usuario
+
+# Importamos el modelo de usuario
 from models.user_model import User
 
-# instanciamos Blueprint
-# Blueprint es un objeto que agrupa rutas y vistas 
-user_bp = Blueprint('user', __name__)
+# Un Blueprint es un objeto que agrupa
+# rutas y vistas
+user_bp = Blueprint("user", __name__)
 
 
-@user_bp.route('/users')
+# Ruta de la página raíz redirige a
+# la página de inicio de sesión
+@user_bp.route("/")
+def index():
+    return redirect(url_for("user.login"))
+
+
+@user_bp.route("/users")
+#@login_required
 def list_users():
+    # Obtenemos todos los usuarios
     users = User.get_all()
+    # Llamamos a la vista de usuarios
     return user_view.usuarios(users)
 
-# la ruta users esta asociada al registro de usuarios 
-@user_bp.route('/users/create', methods=['GET','POST'])
+
+# Definimos la ruta "/users" asociada a la función registro
+# que nos devuelve la vista de registro
+@user_bp.route("/users/create", methods=["GET", "POST"])
+##@login_required
 def create_user():
-    if request.method == 'POST':
-        # obtenemos los datos del formulario
-        name = request.form['name']
-        last = request.form['last_name']
-        email = request.form['email']
-        password = request.form['password']
-        date = request.form['bday']
-        date = datetime.strptime(date, '%m-%d-%Y')
-        # creamos un usuario y lo guardamos
-        user = User(name, last, email, password, date)
+    if request.method == "POST":
+        # Obtenemos los datos del formulario
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        username = request.form["username"]
+        password = request.form["password"]
+        existing_user = User.get_user_by_username(username)
+        if existing_user:
+            flash("El nombre de usuario ya está en uso", "error")
+            return redirect(url_for("user.create_user"))
+        # Creamos un nuevo usuario
+        user = User(first_name, last_name, username, password)
+        user.set_password(password)
+        # Guardamos el usuario
         user.save()
-        # redirigimos a la vista de usuarios
-        return redirect(url_for('user.list_users'))
-    # llamamos a la vista de registro
+        flash("Usuario registrado exitosamente", "success")
+        return redirect(url_for("user.list_users"))
+    # Llamamos a la vista de registro
     return user_view.registro()
 
-'''@user_bp.route('/users/<int:id>', methods=['GET'])
-def obtener_usuario(id):
-    user = User.get_by_id(id)
-    if not user:
-        return "Usuario no encontrado", 404
-    return user_view.actualizar(user)'''
 
-@user_bp.route('/users/<int:id>/update', methods=['GET','POST'])
+# Actualizamos la información del usuario por su id
+# Ya estamos en la vista de actualizar
+# por lo que obtenemos los datos del formulario
+# y actualizamos la información del usuario
+@user_bp.route("/users/<int:id>/update", methods=["GET", "POST"])
+#@login_required
 def update_user(id):
     user = User.get_by_id(id)
     if not user:
         return "Usuario no encontrado", 404
-    
-    if request.method == 'POST':
-        name = request.form['name']
-        last = request.form['last']
-        email = request.form['email']
-        password = request.form['password']
-        bday = request.form['bday']
-        bday = datetime.strptime(bday, '%m-%d-%Y')
-        user.name = name
-        user.last_name = last
-        user.email = email
-        user.password = password
-        user.bday = bday
+    if request.method == "POST":
+        # Obtenemos los datos del formulario
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        # Actualizamos los datos del usuario
+        user.first_name = first_name
+        user.last_name = last_name
+        # Guardamos los cambios
         user.update()
-        return redirect(url_for('user.list_users'))
+        return redirect(url_for("user.list_users"))
     return user_view.actualizar(user)
 
-@user_bp.route('/user/<int:id>/delete') #methods=['GET']
+
+@user_bp.route("/users/<int:id>/delete")
+#@login_required
 def delete_user(id):
     user = User.get_by_id(id)
     if not user:
         return "Usuario no encontrado", 404
-    User.delete(user)
-    return redirect(url_for('user.list_users'))
+    user.delete()
+    return redirect(url_for("user.list_users"))
+
+
+# Ruta para el inicio de sesión
+@user_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = User.get_user_by_username(username)
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            flash("Inicio de sesión exitoso", "success")
+            return redirect(url_for("user.list_users"))
+        else:
+            flash("Nombre de usuario o contraseña incorrectos", "error")
+    return user_view.login()
+
+
+# Ruta para cerrar sesión
+@user_bp.route("/logout")
+#@login_required
+def logout():
+    logout_user()
+    flash("Sesión cerrada exitosamente", "success")
+    return redirect(url_for("user.login"))

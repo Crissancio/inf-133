@@ -1,35 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="uzpdateContainer">
-        <h2>
-            Actualizar Usuario
-        </h2>
-        <div class="formContainer">
-            <form method="post">
-                <div class="inputContainer">
-                    <label for="name">Nombre:</label><br>
-                    <input type="text" name="name" id="name" value="{{user.name}}" required><br>
-                </div>
-                <div class="inputContainer">
-                    <label for="last">Apellido:</label><br>
-                    <input type="text" name="last" id="last" value="{{user.last_name}}" required>
-                </div>
-                <div class="inputContainer">
-                    <label for="email">Email:</label><br>
-                    <input type="text" name="email" id="email" value="{{user.email}}" required>
-                </div>
-                <div class="inputContainer">
-                    <label for="password">Contraseña:</label><br>
-                    <input type="text" name="password" id="password" value="{{user.password}}" required>
-                </div>
-                <div class="inputContainer">
-                    <label for="bday">Fecha de Nacimiento:</label><br>
-                    <input type="text" name="bday" id="bday" value="{{user.bday.strftime('%m-%d-%Y')}}" required placeholder="mm/
-                    -dd-aaaa">
-                </div>
-                <input type="submit" value="Actualizar" class="primaryButton">
-            </form>
+<h2 class="subtitle is-2">Actualizar Usuario</h2>
+
+<form method="post" action="/users/{{ user.id }}/update">
+    <div class="field">
+        <label for="first_name">Nombre:</label>
+        <div class="control">
+            <input type="text" id="first_name" name="first_name" 
+            required class="input" value="{{ user.first_name }}">
         </div>
     </div>
+    <div class="field">
+        <label for="last_name">Apellido:</label>
+        <div class="control">
+            <input type="text" id="last_name" name="last_name" 
+            required class="input" value="{{ user.last_name }}">
+        </div>
+    </div>
+    <input type="submit" value="Actualizar" class="button is-primary">
+
 {% endblock %}

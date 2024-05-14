@@ -1,37 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Lista de Usuarios</h2>
-<table border="1px">
-    <tr>
-        <th>id</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>Email</th>
-        <th>Contraseña</th>
-        <th>Nacimiento &#40;aaaa/mm/dd&#41;</th>
-    </tr>
-    {% for user in users %}
-        <tr>
-            <td>{{user.id}}</td>
-            <td>{{user.name}}</td>
-            <td>{{user.last_name}}</td>
-            <td>{{user.email}}</td>
-            <td>{{user.password}}</td>
-            <td>{{user.bday}}</td>
-                {% if user.id % 2 == 0 %}
-                    <td>Id Par</td>
-                {% else  %}
-                    <td>Id Impar</td>
-                {% endif %}
-            <td>
-                <a href="{{ url_for('user.actualizar', id = user.id) }}" class="updateButton">Editar</a>
-            </td>
-            <td>
-                <a href="{{ url_for('user.eliminar', id = user.id) }}" class="delteButton">Eliminar</a>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+<h2 class="subtitle is-2">Lista de Usuarios</h2>
+    <!--Lista en una tarjeta donde cada usuario tenga sus datos y dos botones para editar y eliminar utilizando grid-->
+    <div class="columns is-multiline">
+        {% for user in users %}
+            <div class="column is-one-third">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="content">
+                            <p><strong>Nombre: {{ user.first_name }} </strong></p>
+                            <p><strong>Apellido: {{ user.last_name }}</strong></p>
+                            <div class="buttons">
+                                <a href="{{ url_for('user.update_user', id=user.id) }}" 
+                                class="button is-info">Editar</a>
+                                <a href="{{ url_for('user.delete_user', id=user.id) }}" 
+                                class="button is-danger">Eliminar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}

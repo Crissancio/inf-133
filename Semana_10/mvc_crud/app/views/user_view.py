@@ -1,15 +1,26 @@
-# render_template() es una función  de Flask que
-# renderiza un template de Jinja2
+# render_template() es una función de Flask
+# que renderiza un template de Jinja2.
 from flask import render_template
 
-# la función recibe la lista de usuarios y renderiza la pagina
-# "usuarios.html"
-def usuarios(usuarios):
-    return render_template('usuarios.html',users=usuarios, title="Lista de Usuarios")
 
-# la función renderiza la pagina "registro.html"
+# La función `usuarios` recibe una lista de
+# usuarios y renderiza el template `usuarios.html`
+def usuarios(users):
+    return render_template("usuarios.html", users=users, title="Lista de usuarios")
+
+
+# La función `registro` renderiza el
+# template `registro.html`
 def registro():
-    return render_template('registro.html', title= "Registro de usuarios")
+    return render_template("registro.html", title="Registro de usuarios")
 
+
+# La función `actualizar` recibe un usuario
+# y renderiza el template `actualizar.html`
 def actualizar(user):
-    return render_template("actualizar.html", user=user, title="Actualizar Usuario")
+    return render_template("actualizar.html", title="Actualizar usuario", user=user)
+
+
+# La función `login` renderiza el template `login.html`
+def login():
+    return render_template("login.html", title="Inicio de sesión")

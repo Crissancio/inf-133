@@ -21,7 +21,7 @@ def index():
 
 
 @user_bp.route("/users")
-#@login_required
+@login_required
 def list_users():
     # Obtenemos todos los usuarios
     users = User.get_all()
@@ -32,7 +32,7 @@ def list_users():
 # Definimos la ruta "/users" asociada a la función registro
 # que nos devuelve la vista de registro
 @user_bp.route("/users/create", methods=["GET", "POST"])
-##@login_required
+@login_required
 def create_user():
     if request.method == "POST":
         # Obtenemos los datos del formulario
@@ -60,7 +60,7 @@ def create_user():
 # por lo que obtenemos los datos del formulario
 # y actualizamos la información del usuario
 @user_bp.route("/users/<int:id>/update", methods=["GET", "POST"])
-#@login_required
+@login_required
 def update_user(id):
     user = User.get_by_id(id)
     if not user:
@@ -79,7 +79,7 @@ def update_user(id):
 
 
 @user_bp.route("/users/<int:id>/delete")
-#@login_required
+@login_required
 def delete_user(id):
     user = User.get_by_id(id)
     if not user:
@@ -106,7 +106,7 @@ def login():
 
 # Ruta para cerrar sesión
 @user_bp.route("/logout")
-#@login_required
+@login_required
 def logout():
     logout_user()
     flash("Sesión cerrada exitosamente", "success")

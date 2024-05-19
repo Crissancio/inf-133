@@ -24,7 +24,7 @@ app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 
 # Configuración de la base de datos
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///libreria.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///libreria_rol.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Inicializa la base de datos

@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 #from controllers.animal_controller import animal_bp
-from controllers.user_controller import user_bp
+from app.controllers.user_controller import user_bp
+from app.controllers.animal_controller import animal_bp
+
 from flask_swagger_ui import get_swaggerui_blueprint
-from database import db
+from app.database import db
 
 app = Flask(__name__)
 
@@ -34,7 +36,7 @@ db.init_app(app)
 jwt = JWTManager(app)
 
 # Registra los blueprints de animales y usuarios en la aplicación
-#app.register_blueprint(animal_bp, url_prefix="/api")
+app.register_blueprint(animal_bp, url_prefix="/api")
 app.register_blueprint(user_bp, url_prefix="/api")
 
 # Crea las tablas si no existen

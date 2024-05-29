@@ -1,43 +1,86 @@
 from flask import Blueprint, request, jsonify
-from models.user_model import User
-from flask_jwt_extended import create_access_token
-from werkzeug.security import check_password_hash
+from app.models.animal_model import Animal
+from app.views.animal_view import render_animal_list, render_animal_detail
+from app.utils.decorator import jwt_required, roles_required
 
-user_bp = Blueprint("user", __name__)
+# Crear un blueprint para el controlador de animales
+animal_bp = Blueprint("animal", __name__)
 
 
-@user_bp.route("/register", methods=["POST"])
-def register():
+# Ruta para obtener la lista de animales
+@animal_bp.route("/animals", methods=["GET"])
+@jwt_required
+@roles_required(roles=["admin", "user"])
+def get_animals():
+    animals = Animal.get_all()
+    return jsonify(render_animal_list(animals))
+
+
+# Ruta para obtener un animal específico por su ID
+@animal_bp.route("/animals/<int:id>", methods=["GET"])
+@jwt_required
+@roles_required(roles=["admin", "user"])
+def get_animal(id):
+    animal = Animal.get_by_id(id)
+    if animal:
+        return jsonify(render_animal_detail(animal))
+    return jsonify({"error": "Animal no encontrado"}), 404
+
+
+# Ruta para crear un nuevo animal
+@animal_bp.route("/animals", methods=["POST"])
+@jwt_required
+@roles_required(roles=["admin"])
+def create_animal():
     data = request.json
-    username = data.get("username")
-    password = data.get("password")
-    roles = data.get("roles")
+    name = data.get("name")
+    species = data.get("species")
+    age = data.get("age")
 
-    if not username or not password:
-        return jsonify({"error": "Se requieren nombre de usuario y contraseña"}), 400
+    # Validación simple de datos de entrada
+    if not name or not species or age is None:
+        return jsonify({"error": "Faltan datos requeridos"}), 400
 
-    existing_user = User.find_by_username(username)
-    if existing_user:
-        return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
+    # Crear un nuevo animal y guardarlo en la base de datos
+    animal = Animal(name=name, species=species, age=age)
+    animal.save()
 
-    new_user = User(username, password, roles)
-    new_user.save()
-
-    return jsonify({"message": "Usuario creado exitosamente"}), 201
+    return jsonify(render_animal_detail(animal)), 201
 
 
-@user_bp.route("/login", methods=["POST"])
-def login():
+# Ruta para actualizar un animal existente
+@animal_bp.route("/animals/<int:id>", methods=["PUT"])
+@jwt_required
+@roles_required(roles=["admin"])
+def update_animal(id):
+    animal = Animal.get_by_id(id)
+
+    if not animal:
+        return jsonify({"error": "Animal no encontrado"}), 404
+
     data = request.json
-    username = data.get("username")
-    password = data.get("password")
+    name = data.get("name")
+    species = data.get("species")
+    age = data.get("age")
 
-    user = User.find_by_username(username)
-    if user and check_password_hash(user.password_hash, password):
-        # Si las credenciales son válidas, genera un token JWT
-        access_token = create_access_token(
-            identity={"username": username, "roles": user.roles}
-        )
-        return jsonify(access_token=access_token), 200
-    else:
-        return jsonify({"error": "Credenciales inválidas"}), 401
+    # Actualizar los datos del animal
+    animal.update(name=name, species=species, age=age)
+
+    return jsonify(render_animal_detail(animal))
+
+
+# Ruta para eliminar un animal existente
+@animal_bp.route("/animals/<int:id>", methods=["DELETE"])
+@jwt_required
+@roles_required(roles=["admin"])
+def delete_animal(id):
+    animal = Animal.get_by_id(id)
+
+    if not animal:
+        return jsonify({"error": "Animal no encontrado"}), 404
+
+    # Eliminar el animal de la base de datos
+    animal.delete()
+
+    # Respuesta vacía con código de estado 204 (sin contenido)
+    return "", 204

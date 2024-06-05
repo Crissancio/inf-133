@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from app.controllers.product_controller import producto_bp
+from app.controllers.user_controller import user_bp
 from flask_swagger_ui import get_swaggerui_blueprint
-
 from app.database import db
 
 app = Flask(__name__)
@@ -17,13 +18,13 @@ API_URL = "/static/swagger.json"
 
 # Inicializa el Blueprint de Swagger UI
 swagger_ui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL, API_URL, config={"app_name": "Tienda Online  API"}
+    SWAGGER_URL, API_URL, config={"app_name": "Zoológico API"}
 )
 app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 
 # Configuración de la base de datos
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///pro.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Inicializa la base de datos
@@ -32,6 +33,9 @@ db.init_app(app)
 # Inicializa la extensión JWTManager
 jwt = JWTManager(app)
 
+# Registra los blueprints de animales y usuarios en la aplicación
+app.register_blueprint(producto_bp, url_prefix="/api")
+app.register_blueprint(user_bp, url_prefix="/api")
 
 # Crea las tablas si no existen
 with app.app_context():

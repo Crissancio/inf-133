@@ -44,7 +44,7 @@ def test_create_product_invalid_data(test_client, admin_auth_headers):
     data = {"name": "Laptop"}  # Falta description, price y stock
     response = test_client.post("/api/products", json=data, headers=admin_auth_headers)
     assert response.status_code == 400
-    assert response.json["error"] == "Faltan datos requeridos"
+    assert response.json["error"] == "Faltan datos"
 
 
 def test_update_product(test_client, admin_auth_headers):

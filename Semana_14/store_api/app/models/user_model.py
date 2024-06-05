@@ -1,44 +1,26 @@
-from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token
-from werkzeug.security import check_password_hash
-
-from app.models.user_model import User
-
-user_bp = Blueprint("user", __name__)
+import json
+from app.database import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
-@user_bp.route("/register", methods=["POST"])
-def register():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-    roles = data.get("roles")
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    roles = db.Column(db.String(50), nullable=False)
 
-    if not username or not password:
-        return jsonify({"error": "Se requieren nombre de usuario y contraseña"}), 400
+    def __init__(self, username, password, roles=["user"]):
+        self.username = username
+        self.roles = json.dumps(roles)
+        self.password = generate_password_hash(password)
 
-    existing_user = User.find_by_username(username)
-    if existing_user:
-        return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
-    new_user = User(username, password, roles)
-    new_user.save()
-
-    return jsonify({"message": "Usuario creado exitosamente"}), 201
-
-
-@user_bp.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-
-    user = User.find_by_username(username)
-    if user and check_password_hash(user.password_hash, password):
-        # Si las credenciales son válidas, genera un token JWT
-        access_token = create_access_token(
-            identity={"username": username, "roles": user.roles}
-        )
-        return jsonify(access_token=access_token), 200
-    else:
-        return jsonify({"error": "Credenciales inválidas"}), 401
+    # Esta funcion encuentra un usuario por su nombre de usuario
+    @staticmethod
+    def find_by_username(username):
+        return User.query.filter_by(username=username).first()
